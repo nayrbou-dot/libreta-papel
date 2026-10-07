@@ -39,3 +39,11 @@ La lectura en voz alta usa el motor de voz del sistema (Ajustes → Accesibilida
 - **3D:** foto 360°/panorámica (mirar alrededor), modelos .glb/.obj/.stl (escaneos de habitaciones o edificios), o una maqueta de ejemplo. Botón de pantalla completa.
 - **🔊 arriba:** lee en voz alta toda la nota (textos y transcripciones).
 - **Opciones ⋮:** tipo de papel (blanco, rayado, cuadrícula, puntos), idioma de voz, exportar PNG y copia de seguridad.
+
+## Vídeo 3D (app aparte)
+Dirección: https://nayrbou-dot.github.io/libreta-papel/video3d/ (instálala también con ⋮ → Instalar app). Se abre igualmente desde Libreta Papel: ⋮ Opciones → Vídeo 3D.
+- **Grabar un sitio en 360°:** graba girando despacio sobre ti mismo. El giroscopio monta el lugar en una esfera 3D y después miras alrededor moviendo la tablet. Inclínala arriba y abajo para rellenar el cielo y el suelo. Si las uniones no encajan, ajusta «Ángulo de la cámara».
+- **Grabar o abrir un vídeo** y verlo como **Pantalla 3D** (curva, con reflejo), **Bloque de tiempo** (los fotogramas apilados en 3D, que puedes girar) o **Vídeo 360°** (para vídeos de cámaras 360).
+- **Exportar vídeo 3D:** graba un vídeo nuevo con la cámara girando alrededor de la escena (se guarda en Descargas).
+- **Guardar panorámica:** imagen 360° que puedes abrir en Libreta Papel (+ → Sitio en 3D → Foto 360°).
+- Todo se procesa en la tablet; nada se sube a internet. Los vídeos no se guardan dentro de la app: usa «Guardar vídeo» o «Exportar» para conservarlos.
