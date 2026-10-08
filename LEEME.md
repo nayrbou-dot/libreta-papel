@@ -34,6 +34,8 @@ La lectura en voz alta usa el motor de voz del sistema (Ajustes → Accesibilida
 - Con «Solo el lápiz dibuja» activado (Opciones ⋮), el dedo mueve la hoja, hace zoom con dos dedos, reproduce vídeos y gira el 3D. La palma se ignora mientras escribes.
 - **+** (abajo a la derecha): imagen, foto con cámara, vídeo, nota de voz y sitio en 3D.
 - Toca un objeto con el dedo para ver su barra: mover (⠿), editar, leer en voz alta, borrar. El círculo azul de la esquina cambia el tamaño.
+- **Notas en el vídeo:** debajo de cada vídeo hay una línea de tiempo. Ve al momento que quieras y pulsa **«Añadir nota en 0:00»**, luego escribe. Cada nota aparece como un punto naranja en la línea. Al reproducir, la nota sale sobre el vídeo en su momento. Toca el minuto de una nota (o su punto) para saltar ahí. Con **«Pausar en cada nota»** el vídeo se detiene al llegar a cada una.
+- **Ver u ocultar las notas del vídeo:** botón **«Ocultar notas / Ver notas»** en la esquina del vídeo. Para todos los vídeos de la página a la vez: ⋮ Opciones → Notas de los vídeos → Mostrar / Ocultar.
 - **Editar imagen:** girar, espejo, recortar, brillo, contraste, saturación, sepia, desenfoque, B/N.
 - **Notas de voz:** se graban y se transcriben a la vez. «Leer» las lee en voz alta, «Transcribir» vuelve a transcribirlas y «Pasar a texto» crea una nota de texto con la transcripción.
 - **3D:** foto 360°/panorámica (mirar alrededor), modelos .glb/.obj/.stl (escaneos de habitaciones o edificios), o una maqueta de ejemplo. Botón de pantalla completa.
