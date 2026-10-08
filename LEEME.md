@@ -31,8 +31,8 @@ La lectura en voz alta usa el motor de voz del sistema (Ajustes → Accesibilida
 
 ## Uso
 - **Pluma, marcador, borrador, lazo, texto y mano** en la barra superior. Con el Magic-Pencil la presión cambia el grosor del trazo.
-- Con «Solo el lápiz dibuja» activado (Opciones ⋮), el dedo mueve la hoja, hace zoom con dos dedos, reproduce vídeos y gira el 3D. La palma se ignora mientras escribes.
-- **+** (abajo a la derecha): imagen, foto con cámara, vídeo, nota de voz y sitio en 3D.
+- Con «Solo el lápiz dibuja» activado (Opciones ⋮), el dedo mueve la hoja, hace zoom con dos dedos y reproduce vídeos. La palma se ignora mientras escribes.
+- **+** (abajo a la derecha): imagen, foto con cámara, vídeo y nota de voz.
 - Toca un objeto con el dedo para ver su barra: mover (⠿), editar, leer en voz alta, borrar. El círculo azul de la esquina cambia el tamaño.
 - **Notas a mano dentro del vídeo:** ve al momento que quieras y pulsa **«Anotar»** (sobre el vídeo) o **«Anotar en 0:00»** (debajo). El vídeo se pausa y escribes o dibujas con el lápiz **directamente sobre la imagen**. Debajo tienes colores, grosor, goma, deshacer y cuánto tiempo se ve la nota (2 s, 4 s, 8 s o hasta la siguiente). Con **Aa** le añades también texto. Pulsa **Listo**.
 - Al reproducir, cada nota aparece **dentro del vídeo** en su momento. En la línea de tiempo son puntos naranjas; toca uno (o el minuto en la lista) para saltar ahí. Toca la miniatura de una nota para volver a editarla. Con **«Pausar en cada nota»** el vídeo se para en cada una.
@@ -41,7 +41,6 @@ La lectura en voz alta usa el motor de voz del sistema (Ajustes → Accesibilida
 - **Ver u ocultar las notas:** botón **«Ocultar / Ver notas»** sobre el vídeo. Para todos los vídeos de la página: ⋮ Opciones → Notas de los vídeos → Mostrar / Ocultar.
 - **Editar imagen:** girar, espejo, recortar, brillo, contraste, saturación, sepia, desenfoque, B/N.
 - **Notas de voz:** se graban y se transcriben a la vez. «Leer» las lee en voz alta, «Transcribir» vuelve a transcribirlas y «Pasar a texto» crea una nota de texto con la transcripción.
-- **3D:** foto 360°/panorámica (mirar alrededor), modelos .glb/.obj/.stl (escaneos de habitaciones o edificios), o una maqueta de ejemplo. Botón de pantalla completa.
 - **🔊 arriba:** lee en voz alta toda la nota (textos y transcripciones).
 - **Opciones ⋮:** tipo de papel (blanco, rayado, cuadrícula, puntos), idioma de voz, exportar PNG y copia de seguridad.
 
