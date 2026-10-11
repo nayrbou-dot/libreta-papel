@@ -310,9 +310,10 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
     <div class="shead"><h3 style="flex:1">Opciones</h3><button class="ghost" data-close>Cerrar</button></div>
     <div class="sbody">
       <div class="mrow"><span><b>Privacidad y acceso</b></span><span></span></div>
-      <div class="mrow"><span>Desbloquear con huella o rostro</span><label class="switch"><input type="checkbox" id="optBio"><span></span></label></div>
+      <div class="mrow"><span>Entrar con Google<br><span class="note">Llave de acceso guardada en tu cuenta de Google; se abre con tu huella o rostro, también sin internet.</span></span><label class="switch"><input type="checkbox" id="optBio"><span></span></label></div>
       <div class="mrow"><span>Bloqueo automático</span><select id="optLock"><option value="1">1 minuto</option><option value="2">2 minutos</option><option value="5">5 minutos</option><option value="15">15 minutos</option><option value="30">30 minutos</option></select></div>
       <div class="mrow"><span>Contraseña</span><button class="ghost" id="optPass">Cambiar</button></div>
+      <div class="mrow"><span>Verificación en dos pasos<br><span class="note" id="optTotpState">Google Authenticator</span></span><button class="ghost" id="optTotp">Activar</button></div>
       <div class="mrow"><span>Recuperación con Google<br><span class="note" id="optRecState"></span></span><button class="ghost" id="optRec">Configurar</button></div>
       <div class="mrow"><span>Transcribir en la nube de Google<br><span class="note">Solo si este dispositivo no puede transcribir sin conexión. Tu voz saldría de la tablet.</span></span><label class="switch"><input type="checkbox" id="optCloud"><span></span></label></div>
       <div class="mrow"><span><b>Escritura</b></span><span></span></div>
@@ -344,16 +345,22 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
       <input type="text" name="username" autocomplete="username" value="Libreta Papel" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <input type="password" id="lkPw" class="pw" placeholder="Contraseña" autocomplete="current-password">
       <input type="password" id="lkPw2" class="pw hidden" placeholder="Repite la contraseña" autocomplete="new-password">
-      <div class="row hidden" id="lkBioRow"><span>Desbloquear también con huella o rostro</span><label class="switch"><input type="checkbox" id="lkBio" checked><span></span></label></div>
+      <div class="row hidden" id="lkBioRow"><span>Entrar también con Google (llave de acceso con huella o rostro)</span><label class="switch"><input type="checkbox" id="lkBio" checked><span></span></label></div>
       <div class="err" id="lkErr"></div>
       <button class="primary wide" id="lkGo" type="submit">Desbloquear</button>
     </form>
-    <button class="ghost wide bio hidden" id="lkBioBtn" type="button"></button>
+    <button class="gbtn hidden" id="lkBioBtn" type="button" style="margin-top:10px"></button>
+    <form id="lkTotp" class="hidden stack" autocomplete="off" style="margin-top:18px">
+      <input type="text" id="totpIn" class="pw" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" placeholder="000000" autocomplete="one-time-code" style="text-align:center;font-size:24px;letter-spacing:6px">
+      <div class="err" id="totpErr"></div>
+      <button class="primary wide" type="submit">Verificar</button>
+      <button class="linkbtn" id="totpLost" type="button" style="margin-top:4px">No tengo el móvil con Authenticator</button>
+    </form>
     <button class="linkbtn hidden" id="lkForgot" type="button">¿Olvidaste la contraseña?</button>
     <div id="lkRecover" class="hidden stack" style="text-align:left;margin-top:16px;border-top:1px solid var(--line);padding-top:16px">
       <p style="margin:0;font-weight:600">Recuperar el acceso sin perder tus notas</p>
       <button class="gbtn" id="rcGoogle" type="button"><svg viewBox="0 0 48 48" width="20" height="20" style="flex:none"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>Recuperar con Google</button>
-      <button class="ghost wide bio hidden" id="rcBio" type="button"></button>
+      <button class="ghost wide hidden" id="rcBio" type="button"></button>
       <form id="rcCodeF" class="stack" autocomplete="off"><input type="text" id="rcCode" class="pw" placeholder="O escribe tu código de recuperación" autocapitalize="characters" spellcheck="false"><button class="primary wide" type="submit">Entrar con el código</button></form>
       <div class="err" id="rcErr"></div>
       <div style="display:flex;justify-content:space-between;gap:10px"><button class="linkbtn" id="rcBack" type="button" style="margin:0">Volver</button><button class="linkbtn" id="rcWipe" type="button" style="margin:0">No puedo recuperarlo: empezar de cero</button></div>
@@ -387,6 +394,22 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
         <button class="primary wide" id="recDone" type="button">Listo</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Google Authenticator -->
+<div class="modal" id="totpm">
+  <div class="sheet" style="width:min(480px,100%)">
+    <div class="shead"><h3 style="flex:1">Verificación en dos pasos</h3><button class="ghost" id="totpCancel" type="button">Cancelar</button></div>
+    <form class="sbody stack" id="totpSetF" autocomplete="off">
+      <p class="note" style="margin:0;font-size:14px">1. En tu móvil, abre <b>Google Authenticator</b> → <b>+</b> → <b>Escanear un código QR</b> y escanea este código.</p>
+      <div style="display:flex;justify-content:center"><canvas id="totpQR" style="width:220px;height:220px;image-rendering:pixelated;border-radius:8px"></canvas></div>
+      <p class="note" style="margin:0">¿No puedes escanearlo? Elige «Introducir una clave de configuración» y escribe: <b id="totpKey" style="font-family:ui-monospace,monospace;-webkit-user-select:all;user-select:all"></b> (tipo: basada en el tiempo). Si Authenticator está en esta misma tablet: <a id="totpLink" href="#">abrir en Authenticator</a>.</p>
+      <p class="note" style="margin:0;font-size:14px">2. Escribe el código de 6 cifras que aparece en Authenticator para «Libreta Papel»:</p>
+      <input type="text" id="totpSetIn" class="pw" inputmode="numeric" maxlength="7" placeholder="000000" style="text-align:center;font-size:24px;letter-spacing:6px">
+      <div class="err" id="totpSetErr"></div>
+      <button class="primary wide" type="submit">Activar</button>
+    </form>
   </div>
 </div>
 
@@ -459,7 +482,7 @@ function fillIcons(){
  $('#bSide').innerHTML=ic('menu');
  $$('.tool').forEach(b=>b.innerHTML=ic(b.dataset.tool));
  $('#bUndo').innerHTML=ic('undo');$('#bRedo').innerHTML=ic('redo');
- $('#bRead').innerHTML=ic('speak');$('#bLock').innerHTML=ic('lock');$('#lkLogo').innerHTML=ic('lock');$('#lkBioBtn').innerHTML=ic('finger')+'Usar huella o rostro';$('#bMenu').innerHTML=ic('more');
+ $('#bRead').innerHTML=ic('speak');$('#bLock').innerHTML=ic('lock');$('#lkLogo').innerHTML=ic('lock');$('#lkBioBtn').innerHTML=GLOGO+'Entrar con Google';$('#bMenu').innerHTML=ic('more');
  $('#zOut').innerHTML=ic('minus');$('#zIn').innerHTML=ic('plus');
  $('#fabMain').innerHTML=ic('plus');
  const fi={image:'image',camera:'camera',video:'video',voice:'mic'};
@@ -503,7 +526,7 @@ async function enableBio(){
  if(!await bioPossible())throw new Error('Este dispositivo o este modo de abrir la app no permite huella. Usa la app instalada.');
  const prfSalt=rnd(32);
  const cred=await navigator.credentials.create({publicKey:{rp:{name:'Libreta Papel'},user:{id:rnd(16),name:'Libreta Papel',displayName:'Libreta Papel'},challenge:rnd(32),
-  pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'preferred'},
+  pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'required'},
   timeout:120000,extensions:{prf:{eval:{first:prfSalt}}}}});
  const ext=cred.getClientExtensionResults();
  if(!ext.prf||ext.prf.enabled===false)throw new Error('Este dispositivo no permite cifrar con huella. Seguirás entrando con la contraseña.');
@@ -532,6 +555,96 @@ async function unlockBio(){const b=SEC.auth.bio;SEC.key=await unwrapKey(await pr
 async function checkPw(pw){try{await unwrapKey(await pwKey(pw,SEC.auth.salt,SEC.auth.iter),SEC.auth.pw);return true;}catch(e){return false;}}
 
 /* Pantalla de bloqueo: nada se descifra ni se muestra hasta entrar */
+/* ---------- Código QR (para configurar Google Authenticator sin internet) ---------- */
+const QR=(()=>{
+ // [datos por bloque..., ec por bloque] para versiones 1–10, nivel de corrección M
+ const TBL=[null,[[16],10],[[28],16],[[44],26],[[32,32],18],[[43,43],24],[[27,27,27,27],16],[[31,31,31,31],18],[[38,38,39,39],22],[[36,36,36,37,37],22],[[43,43,43,43,44],26]];
+ const ALIGN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
+ const mul=(x,y)=>{let z=0;for(let i=7;i>=0;i--){z=(z<<1)^((z>>>7)*0x11D);z^=((y>>>i)&1)*x;}return z;};
+ function rsDiv(deg){const r=new Array(deg).fill(0);r[deg-1]=1;let root=1;for(let i=0;i<deg;i++){for(let j=0;j<r.length;j++){r[j]=mul(r[j],root);if(j+1<r.length)r[j]^=r[j+1];}root=mul(root,2);}return r;}
+ function rsRem(data,div){const res=new Array(div.length).fill(0);for(const b of data){const f=b^res.shift();res.push(0);div.forEach((c,i)=>res[i]^=mul(c,f));}return res;}
+ const bit=(x,i)=>((x>>>i)&1)!==0;
+ function encode(text){
+  const bytes=[...new TextEncoder().encode(text)];
+  let ver=1;for(;ver<=10;ver++){const cap=TBL[ver][0].reduce((a,b)=>a+b,0);if(4+(ver<10?8:16)+bytes.length*8<=cap*8)break;}
+  if(ver>10)throw new Error('Texto demasiado largo para el QR');
+  const [blocks,ec]=TBL[ver],cap=blocks.reduce((a,b)=>a+b,0);
+  // flujo de bits: modo byte + longitud + datos + terminador + relleno
+  const bb=[];const put=(v,n)=>{for(let i=n-1;i>=0;i--)bb.push((v>>>i)&1);};
+  put(4,4);put(bytes.length,ver<10?8:16);bytes.forEach(b=>put(b,8));
+  put(0,Math.min(4,cap*8-bb.length));while(bb.length%8)bb.push(0);
+  const data=[];for(let i=0;i<bb.length;i+=8)data.push(parseInt(bb.slice(i,i+8).join(''),2));
+  for(let p=0xEC;data.length<cap;p^=0xEC^0x11)data.push(p);
+  // bloques + corrección de errores, intercalados
+  const div=rsDiv(ec),bl=[];let k=0;for(const n of blocks){const d=data.slice(k,k+n);k+=n;bl.push({d,e:rsRem(d,div)});}
+  const cw=[];const maxD=Math.max(...blocks);
+  for(let i=0;i<maxD;i++)for(const b of bl)if(i<b.d.length)cw.push(b.d[i]);
+  for(let i=0;i<ec;i++)for(const b of bl)cw.push(b.e[i]);
+  // matriz
+  const size=ver*4+17,M=[...Array(size)].map(()=>new Array(size).fill(false)),F=[...Array(size)].map(()=>new Array(size).fill(false));
+  const set=(x,y,v)=>{M[y][x]=v;F[y][x]=true;};
+  for(let i=0;i<size;i++){set(6,i,i%2===0);set(i,6,i%2===0);}
+  const finder=(cx,cy)=>{for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const x=cx+dx,y=cy+dy;if(x<0||y<0||x>=size||y>=size)continue;const d=Math.max(Math.abs(dx),Math.abs(dy));set(x,y,d!==2&&d!==4);}};
+  finder(3,3);finder(size-4,3);finder(3,size-4);
+  const al=ALIGN[ver],na=al.length;
+  for(let i=0;i<na;i++)for(let j=0;j<na;j++){if((i===0&&j===0)||(i===0&&j===na-1)||(i===na-1&&j===0))continue;
+   for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)set(al[i]+dx,al[j]+dy,Math.max(Math.abs(dx),Math.abs(dy))!==1);}
+  const drawFormat=mask=>{const d=(0<<3)|mask;let r=d;for(let i=0;i<10;i++)r=(r<<1)^((r>>>9)*0x537);const b=((d<<10)|r)^0x5412;
+   for(let i=0;i<=5;i++)set(8,i,bit(b,i));set(8,7,bit(b,6));set(8,8,bit(b,7));set(7,8,bit(b,8));for(let i=9;i<15;i++)set(14-i,8,bit(b,i));
+   for(let i=0;i<8;i++)set(size-1-i,8,bit(b,i));for(let i=8;i<15;i++)set(8,size-15+i,bit(b,i));set(8,size-8,true);};
+  drawFormat(0);
+  if(ver>=7){let r=ver;for(let i=0;i<12;i++)r=(r<<1)^((r>>>11)*0x1F25);const b=(ver<<12)|r;
+   for(let i=0;i<18;i++){const a=size-11+i%3,c=Math.floor(i/3);set(a,c,bit(b,i));set(c,a,bit(b,i));}}
+  let i=0;
+  for(let right=size-1;right>=1;right-=2){if(right===6)right=5;
+   for(let v=0;v<size;v++)for(let j=0;j<2;j++){const x=right-j,up=((right+1)&2)===0,y=up?size-1-v:v;
+    if(!F[y][x]&&i<cw.length*8){M[y][x]=bit(cw[i>>>3],7-(i&7));i++;}}}
+  const MASKS=[(x,y)=>(x+y)%2===0,(x,y)=>y%2===0,(x,y)=>x%3===0,(x,y)=>(x+y)%3===0,(x,y)=>(Math.floor(x/3)+Math.floor(y/2))%2===0,
+   (x,y)=>x*y%2+x*y%3===0,(x,y)=>(x*y%2+x*y%3)%2===0,(x,y)=>((x+y)%2+x*y%3)%2===0];
+  const apply=m=>{for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(!F[y][x]&&MASKS[m](x,y))M[y][x]=!M[y][x];};
+  const penalty=()=>{let p=0,dark=0;
+   for(let y=0;y<size;y++){for(let run=1,x=1;x<=size;x++){if(x<size&&M[y][x]===M[y][x-1])run++;else{if(run>=5)p+=run-2;run=1;}}}
+   for(let x=0;x<size;x++){for(let run=1,y=1;y<=size;y++){if(y<size&&M[y][x]===M[y-1][x])run++;else{if(run>=5)p+=run-2;run=1;}}}
+   for(let y=0;y<size-1;y++)for(let x=0;x<size-1;x++){const c=M[y][x];if(c===M[y][x+1]&&c===M[y+1][x]&&c===M[y+1][x+1])p+=3;}
+   for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(M[y][x])dark++;
+   return p+Math.floor(Math.abs(dark*20-size*size*10)/(size*size))*10;};
+  let best=0,bp=1e9;for(let m=0;m<8;m++){apply(m);drawFormat(m);const pp=penalty();if(pp<bp){bp=pp;best=m;}apply(m);}
+  apply(best);drawFormat(best);
+  return M;
+ }
+ function draw(canvas,text,px=6){const M=encode(text),n=M.length,q=4,s=(n+q*2)*px;canvas.width=s;canvas.height=s;const c=canvas.getContext('2d');
+  c.fillStyle='#fff';c.fillRect(0,0,s,s);c.fillStyle='#000';for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(M[y][x])c.fillRect((x+q)*px,(y+q)*px,px,px);}
+ return {encode,draw};
+})();
+
+/* ---------- Códigos de Google Authenticator (TOTP, RFC 6238) ---------- */
+const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+function b32enc(bytes){let bits=0,val=0,out='';for(const b of bytes){val=(val<<8)|b;bits+=8;while(bits>=5){out+=B32[(val>>>(bits-5))&31];bits-=5;}val&=(1<<bits)-1;}if(bits>0)out+=B32[(val<<(5-bits))&31];return out;}
+async function totpAt(secret,counter){
+ const key=await crypto.subtle.importKey('raw',secret,{name:'HMAC',hash:'SHA-1'},false,['sign']);
+ const msg=new ArrayBuffer(8),dv=new DataView(msg);dv.setUint32(0,Math.floor(counter/4294967296));dv.setUint32(4,counter>>>0);
+ const h=new Uint8Array(await crypto.subtle.sign('HMAC',key,msg)),o=h[h.length-1]&15;
+ const n=(((h[o]&127)<<24)|(h[o+1]<<16)|(h[o+2]<<8)|h[o+3])%1000000;return String(n).padStart(6,'0');
+}
+async function totpCheck(secret,code){code=(code||'').replace(/\D/g,'');if(code.length!==6)return false;const c=Math.floor(Date.now()/30000);
+ for(const d of [0,-1,1])if(await totpAt(secret,c+d)===code)return true;return false;}
+
+const GLOGO='<svg viewBox="0 0 48 48" width="20" height="20" style="flex:none"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>';
+/* La clave de Authenticator se guarda cifrada con la clave de la libreta */
+const totpSecret=async()=>new Uint8Array(await decBuf(SEC.auth.totp.iv,SEC.auth.totp.ct));
+function setupTotp(){
+ const secret=rnd(20),key=b32enc(secret);
+ const uri='otpauth://totp/Libreta%20Papel:Mi%20libreta?secret='+key+'&issuer=Libreta%20Papel&algorithm=SHA1&digits=6&period=30';
+ QR.draw($('#totpQR'),uri,6);$('#totpKey').textContent=key.match(/.{1,4}/g).join(' ');$('#totpLink').href=uri;
+ $('#totpSetIn').value='';$('#totpSetErr').textContent='';$('#menu').classList.remove('open');$('#totpm').classList.add('open');
+ $('#totpCancel').onclick=()=>$('#totpm').classList.remove('open');
+ $('#totpSetF').onsubmit=async e=>{e.preventDefault();
+  if(!await totpCheck(secret,$('#totpSetIn').value)){$('#totpSetErr').textContent='Código incorrecto. Comprueba que la hora de la tablet y del móvil es correcta y prueba con el código actual.';return;}
+  const {iv,ct}=await encBuf(secret);SEC.auth.totp={iv,ct,at:Date.now()};await saveAuth();$('#totpm').classList.remove('open');updTotpState();
+  toast('Verificación en dos pasos activada. A partir de ahora se pedirá el código de Authenticator.',4500);};
+}
+function updTotpState(){if(!SEC.auth)return;$('#optTotpState').textContent=SEC.auth.totp?'Activada · Google Authenticator':'Google Authenticator · sin activar';$('#optTotp').textContent=SEC.auth.totp?'Desactivar':'Activar';}
+
 /* ---------- Recuperación con Google ---------- */
 const RC_ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',RC_ITER=150000;
 function newRecoveryCode(){const b=rnd(20);let c='';for(let i=0;i<20;i++){c+=RC_ALPHA[b[i]&31];if(i%4===3&&i<19)c+='-';}return c;}
@@ -562,7 +675,7 @@ function gate(){
   if(!window.crypto||!crypto.subtle){$('#lkTitle').textContent='No se puede abrir';$('#lkSub').textContent='Este modo de abrir la app no permite el cifrado. Abre la app instalada (ver LEEME).';$('#lkForm').classList.add('hidden');return;}
   const canBio=await bioPossible();
   $('#lkTitle').textContent=setup?'Protege tu libreta':'Libreta bloqueada';
-  $('#lkSub').textContent=setup?'Crea una contraseña solo tuya. Tus notas se cifran con ella y nunca salen de este dispositivo. Si la olvidas, no se pueden recuperar.':'Introduce tu contraseña'+(SEC.auth.bio?' o usa tu huella o rostro.':'.');
+  $('#lkSub').textContent=setup?'Crea una contraseña solo tuya. Tus notas se cifran con ella y nunca salen de este dispositivo. Si la olvidas, no se pueden recuperar.':'Introduce tu contraseña'+(SEC.auth.bio?' o entra con Google.':'.');
   $('#lkPw').autocomplete=setup?'new-password':'current-password';
   $('#lkPw2').classList.toggle('hidden',!setup);
   $('#lkBioRow').classList.toggle('hidden',!(setup&&canBio));
@@ -572,18 +685,38 @@ function gate(){
   const busy=b=>{$('#lkGo').disabled=b;$('#lkBioBtn').disabled=b;};
   const done=async()=>{SEC.auth.fails=0;SEC.auth.lockUntil=0;await saveAuth();$('#lkPw').value='';$('#lkPw2').value='';err('');L.classList.add('hidden');res();
    if(!SEC.auth.rec&&!SEC.auth.recAsked)setTimeout(()=>showRecovery(true),700);};
+  /* Segundo paso: código de Google Authenticator (si está activado) */
+  const pass2=async()=>{
+   if(SEC.auth.totp){
+    await new Promise(resolve=>{
+     ['#lkForm','#lkBioBtn','#lkForgot','#lkRecover','#lkReset'].forEach(x=>$(x).classList.add('hidden'));
+     $('#lkTotp').classList.remove('hidden');$('#lkTitle').textContent='Verificación en dos pasos';
+     $('#lkSub').textContent='Abre Google Authenticator en tu móvil y escribe el código de «Libreta Papel».';
+     const inp=$('#totpIn'),terr=m=>$('#totpErr').textContent=m;inp.value='';terr('');setTimeout(()=>inp.focus(),120);
+     $('#lkTotp').onsubmit=async e=>{e.preventDefault();
+      const wait=(SEC.auth.lockUntil||0)-Date.now();if(wait>0)return terr('Demasiados intentos. Espera '+Math.ceil(wait/1000)+' s.');
+      let ok=false;try{ok=await totpCheck(await totpSecret(),inp.value);}catch(x){}
+      if(ok){$('#lkTotp').classList.add('hidden');resolve();return;}
+      SEC.auth.fails=(SEC.auth.fails||0)+1;const d=[0,0,0,5,15,30,60,120,300,600][Math.min(SEC.auth.fails,9)];SEC.auth.lockUntil=Date.now()+d*1000;await saveAuth();
+      terr('Código incorrecto'+(d?'. Espera '+d+' s.':'. Usa el código que se ve ahora en Authenticator.'));inp.select();};
+     $('#totpLost').onclick=()=>{SEC.key=null;$('#lkTotp').classList.add('hidden');$('#lkTitle').textContent='Recuperar el acceso';$('#lkSub').textContent='Sin el móvil, entra con tu código de recuperación (guardado en Google).';
+      $('#lkRecover').classList.remove('hidden');$('#rcBio').classList.add('hidden');$('#rcBack').classList.add('hidden');};
+    });
+   }
+   await done();
+  };
   /* Después de entrar con el código: elegir una contraseña nueva (las notas no se tocan) */
   const afterRecover=async()=>{
    await done();let nw=null;
    while(!nw){nw=await askPw({title:'Crea una contraseña nueva',desc:'Has recuperado el acceso y tus notas están intactas. Elige una contraseña nueva (mínimo 6 caracteres).',confirm2:true,min:6});if(!nw)toast('Necesitas crear una contraseña nueva');}
    const salt=rnd(16);SEC.auth.pw=await wrapKey(await pwKey(nw,salt,PBKDF2_ITER));SEC.auth.salt=salt;SEC.auth.iter=PBKDF2_ITER;SEC.auth.fails=0;SEC.auth.lockUntil=0;await saveAuth();
-   toast('Contraseña nueva guardada. Tus notas están intactas.',4000);
+   toast(SEC.auth.totp?'Contraseña nueva guardada. Si perdiste el móvil, vuelve a configurar Authenticator en ⋮ Opciones.':'Contraseña nueva guardada. Tus notas están intactas.',5000);
   };
   const rcErr=m=>$('#rcErr').textContent=m;
   const tryRecover=async secret=>{
    if(!secret)return false;
    try{if(SEC.auth.rec){await unlockRec(secret);await afterRecover();return true;}}catch(e){}
-   try{await unlockPw(secret);await done();toast('Era tu contraseña guardada en Google',3500);return true;}catch(e){}
+   try{await unlockPw(secret);toast('Era tu contraseña guardada en Google',3500);await pass2();return true;}catch(e){}
    return false;
   };
   $('#rcGoogle').onclick=async()=>{
@@ -596,7 +729,7 @@ function gate(){
   $('#rcCodeF').onsubmit=async e=>{e.preventDefault();rcErr('');const c=$('#rcCode').value;if(!c.trim())return rcErr('Escribe el código.');
    if(!SEC.auth.rec)return rcErr('Esta libreta no tiene código de recuperación activado.');
    try{await unlockRec(c);$('#rcCode').value='';await afterRecover();}catch(x){rcErr('Código incorrecto. Revisa las letras y los números.');}};
-  $('#rcBio').innerHTML=ic('finger')+'Usar huella o llave de acceso';$('#rcBio').classList.toggle('hidden',!SEC.auth||!SEC.auth.bio);
+  $('#rcBio').innerHTML=GLOGO+'Entrar con Google (llave de acceso)';$('#rcBio').classList.toggle('hidden',!SEC.auth||!SEC.auth.bio);
   $('#rcBio').onclick=()=>$('#lkBioBtn').click();
   $('#rcBack').onclick=()=>{$('#lkRecover').classList.add('hidden');$('#lkReset').classList.add('hidden');$('#lkForgot').classList.remove('hidden');$('#lkForm').classList.remove('hidden');};
   $('#rcWipe').onclick=()=>{$('#lkRecover').classList.add('hidden');forgotPw();};
@@ -611,12 +744,12 @@ function gate(){
    }
    const wait=(SEC.auth.lockUntil||0)-Date.now();if(wait>0)return err('Demasiados intentos. Espera '+Math.ceil(wait/1000)+' s.');
    busy(true);$('#lkGo').textContent='Comprobando…';
-   try{await unlockPw(pw);await done();}
+   try{await unlockPw(pw);await pass2();}
    catch(x){SEC.auth.fails=(SEC.auth.fails||0)+1;const d=[0,0,0,5,15,30,60,120,300,600][Math.min(SEC.auth.fails,9)];SEC.auth.lockUntil=Date.now()+d*1000;await saveAuth();
     err('Contraseña incorrecta'+(d?'. Espera '+d+' s.':'.'));$('#lkPw').select();}
    busy(false);$('#lkGo').textContent='Desbloquear';
   };
-  $('#lkBioBtn').onclick=async()=>{err('');const bb=$('#lkBioBtn');bb.disabled=true;try{await unlockBio();if(!$('#lock').classList.contains('hidden'))await done();}catch(x){if(!SEC.key)err(x.name==='NotAllowedError'?'Cancelado. Puedes usar la contraseña.':'No se pudo: '+x.message);}bb.disabled=false;};
+  $('#lkBioBtn').onclick=async()=>{err('');const bb=$('#lkBioBtn');bb.disabled=true;try{await unlockBio();if(!$('#lock').classList.contains('hidden'))await pass2();}catch(x){if(!SEC.key)err(x.name==='NotAllowedError'?'Cancelado. Puedes usar la contraseña.':'No se pudo: '+x.message);}bb.disabled=false;};
   $('#lkForgot').onclick=()=>{$('#lkForgot').classList.add('hidden');$('#lkRecover').classList.remove('hidden');$('#lkForm').classList.add('hidden');rcErr(SEC.auth.rec?'':'Esta libreta no tenía la recuperación activada. Prueba con Google por si guardaste ahí la contraseña.');};
   if(!setup&&SEC.auth.bio)setTimeout(()=>$('#lkBioBtn').click(),250);else setTimeout(()=>$('#lkPw').focus(),150);
  });
@@ -1670,8 +1803,8 @@ function wireUI(){
  $$('#fab .item').forEach(b=>b.onclick=()=>{$('#fab').classList.remove('open');const a=b.dataset.add;picking=a!=='voice';
   if(a==='image')$('#fImage').click();else if(a==='camera')$('#fCamera').click();else if(a==='video')$('#fVideo').click();else if(a==='voice')openRecorder();});
  $$('[data-close]').forEach(b=>b.onclick=()=>b.closest('.modal').classList.remove('open'));
- $$('.modal').forEach(m=>m.addEventListener('pointerdown',e=>{if(e.target===m&&m.id!=='imged'&&m.id!=='ask'&&!(m.id==='rec'&&REC.on))m.classList.remove('open');}));
- $('#bMenu').onclick=async()=>{updRecState();$('#optBio').checked=!!SEC.auth.bio;$('#optBio').disabled=!await bioPossible()&&!SEC.auth.bio;$('#optLock').value=String(SEC.auth.lockMin||5);$('#optCloud').checked=!!SEC.auth.cloudSR;$('#optPen').checked=S.penOnly;$('#optPaper').value=S.page.paper||'blank';$('#optLang').value=S.lang;$('#menu').classList.add('open');};
+ $$('.modal').forEach(m=>m.addEventListener('pointerdown',e=>{if(e.target===m&&m.id!=='imged'&&m.id!=='ask'&&m.id!=='totpm'&&!(m.id==='rec'&&REC.on))m.classList.remove('open');}));
+ $('#bMenu').onclick=async()=>{updRecState();updTotpState();$('#optBio').checked=!!SEC.auth.bio;$('#optBio').disabled=!await bioPossible()&&!SEC.auth.bio;$('#optLock').value=String(SEC.auth.lockMin||5);$('#optCloud').checked=!!SEC.auth.cloudSR;$('#optPen').checked=S.penOnly;$('#optPaper').value=S.page.paper||'blank';$('#optLang').value=S.lang;$('#menu').classList.add('open');};
  $('#optPen').onchange=e=>{S.penOnly=e.target.checked;savePrefs();toast(S.penOnly?'Solo el lápiz dibuja; el dedo mueve la hoja':'El dedo también dibuja');};
  $('#optPaper').onchange=e=>{S.page.paper=e.target.value;drawBg();markDirty();};
  const vnAll=show=>{let n=0;for(const o of S.page.objects)if(o.type==='video'){o.showNotes=show;n++;const el=objsEl.querySelector(`[data-id="${o.id}"]`);el&&el._sync&&el._sync();}
@@ -1683,6 +1816,11 @@ function wireUI(){
  $('#bLock').onclick=lockNow;
  $('#optLock').onchange=async e=>{SEC.auth.lockMin=+e.target.value;await saveAuth();};
  $('#optPass').onclick=changePw;
+ $('#optTotp').onclick=async()=>{
+  if(!SEC.auth.totp){setupTotp();return;}
+  const c=await askPw({title:'Código de Google Authenticator',desc:'Para desactivar la verificación en dos pasos, escribe el código actual de Authenticator.'});if(c==null)return;
+  let ok=false;try{ok=await totpCheck(await totpSecret(),c);}catch(e){}
+  if(!ok){toast('Código incorrecto');return;}SEC.auth.totp=null;await saveAuth();updTotpState();toast('Verificación en dos pasos desactivada');};
  $('#optRec').onclick=async()=>{
   if(SEC.auth.rec){const pw=await askPw({title:'Confirma tu contraseña',desc:'Se creará un código nuevo y el anterior dejará de funcionar.'});if(pw==null)return;if(!await checkPw(pw)){toast('Contraseña incorrecta');return;}}
   $('#menu').classList.remove('open');showRecovery(false);};
