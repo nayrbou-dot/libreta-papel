@@ -189,6 +189,10 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
 .bio{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px}
 .linkbtn{background:none;border:0;color:var(--muted);font-size:13px;margin-top:16px;cursor:pointer;text-decoration:underline}
 #lock .row{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;font-size:15px;padding:4px 2px}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:1px solid #dadce0;border-radius:12px;height:50px;width:100%;font-size:16px;font-weight:600;color:#1d1d1f;cursor:pointer}
+.gbtn:active{background:#f6f7f9}
+.reccode{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:22px;letter-spacing:1px;text-align:center;background:#f6f7f9;border-radius:12px;padding:14px;margin:12px 0;-webkit-user-select:all;user-select:all;word-break:break-all;color:#1d1d1f}
+.stack{display:flex;flex-direction:column;gap:10px}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}
 #toast.show{opacity:1}
 .hidden{display:none!important}
@@ -309,6 +313,7 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
       <div class="mrow"><span>Desbloquear con huella o rostro</span><label class="switch"><input type="checkbox" id="optBio"><span></span></label></div>
       <div class="mrow"><span>Bloqueo automático</span><select id="optLock"><option value="1">1 minuto</option><option value="2">2 minutos</option><option value="5">5 minutos</option><option value="15">15 minutos</option><option value="30">30 minutos</option></select></div>
       <div class="mrow"><span>Contraseña</span><button class="ghost" id="optPass">Cambiar</button></div>
+      <div class="mrow"><span>Recuperación con Google<br><span class="note" id="optRecState"></span></span><button class="ghost" id="optRec">Configurar</button></div>
       <div class="mrow"><span>Transcribir en la nube de Google<br><span class="note">Solo si este dispositivo no puede transcribir sin conexión. Tu voz saldría de la tablet.</span></span><label class="switch"><input type="checkbox" id="optCloud"><span></span></label></div>
       <div class="mrow"><span><b>Escritura</b></span><span></span></div>
       <div class="mrow"><span>Solo el lápiz dibuja<br><span class="note">El dedo mueve la hoja y usa los vídeos. Evita trazos con la palma.</span></span><label class="switch"><input type="checkbox" id="optPen"><span></span></label></div>
@@ -335,7 +340,8 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
     <div class="logo" id="lkLogo"></div>
     <h2 id="lkTitle">Libreta Papel</h2>
     <p class="note" id="lkSub"></p>
-    <form id="lkForm" autocomplete="off">
+    <form id="lkForm" autocomplete="on">
+      <input type="text" name="username" autocomplete="username" value="Libreta Papel" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <input type="password" id="lkPw" class="pw" placeholder="Contraseña" autocomplete="current-password">
       <input type="password" id="lkPw2" class="pw hidden" placeholder="Repite la contraseña" autocomplete="new-password">
       <div class="row hidden" id="lkBioRow"><span>Desbloquear también con huella o rostro</span><label class="switch"><input type="checkbox" id="lkBio" checked><span></span></label></div>
@@ -344,12 +350,42 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
     </form>
     <button class="ghost wide bio hidden" id="lkBioBtn" type="button"></button>
     <button class="linkbtn hidden" id="lkForgot" type="button">¿Olvidaste la contraseña?</button>
-    <div id="lkReset" class="hidden" style="text-align:left;margin-top:16px;border-top:1px solid var(--line);padding-top:16px">
+    <div id="lkRecover" class="hidden stack" style="text-align:left;margin-top:16px;border-top:1px solid var(--line);padding-top:16px">
+      <p style="margin:0;font-weight:600">Recuperar el acceso sin perder tus notas</p>
+      <button class="gbtn" id="rcGoogle" type="button"><svg viewBox="0 0 48 48" width="20" height="20" style="flex:none"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>Recuperar con Google</button>
+      <button class="ghost wide bio hidden" id="rcBio" type="button"></button>
+      <form id="rcCodeF" class="stack" autocomplete="off"><input type="text" id="rcCode" class="pw" placeholder="O escribe tu código de recuperación" autocapitalize="characters" spellcheck="false"><button class="primary wide" type="submit">Entrar con el código</button></form>
+      <div class="err" id="rcErr"></div>
+      <div style="display:flex;justify-content:space-between;gap:10px"><button class="linkbtn" id="rcBack" type="button" style="margin:0">Volver</button><button class="linkbtn" id="rcWipe" type="button" style="margin:0">No puedo recuperarlo: empezar de cero</button></div>
+    </div>
+    <div id="lkReset" class="hidden" style="text-align:left;margin-top:12px">
       <p style="margin:0 0 8px;font-weight:600">Empezar de cero</p>
       <p class="note" style="margin:0 0 10px">Sin la contraseña tus notas no se pueden descifrar: nadie puede recuperarlas. Si sigues, se borrarán todas las notas de este dispositivo y crearás una contraseña nueva. Si tienes una copia de seguridad, podrás importarla después.</p>
       <input type="text" id="lkResetTxt" class="pw" placeholder="Escribe BORRAR para confirmar" autocomplete="off" autocapitalize="characters" spellcheck="false">
       <div class="err" id="lkResetErr"></div>
       <div style="display:flex;gap:8px"><button class="ghost wide" id="lkResetNo" type="button">Cancelar</button><button class="primary wide" id="lkResetGo" type="button" style="background:var(--danger)">Borrar todo</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Recuperación con Google -->
+<div class="modal" id="recm">
+  <div class="sheet" style="width:min(480px,100%)">
+    <div class="shead"><h3 style="flex:1">Recuperación con Google</h3></div>
+    <div class="sbody stack">
+      <div id="recIntro" class="stack">
+        <p class="note" style="margin:0;font-size:14px">Si algún día olvidas la contraseña, podrás entrar con tu cuenta de Google <b>sin perder tus notas</b>. La app crea un código secreto que también abre tu libreta y lo guarda en el <b>Gestor de contraseñas de Google</b>. Tus notas siguen sin salir de la tablet.</p>
+        <button class="primary wide" id="recStart" type="button">Activar recuperación</button>
+        <button class="ghost wide" id="recLater" type="button">Ahora no</button>
+      </div>
+      <div id="recShow" class="stack hidden">
+        <p class="note" style="margin:0;font-size:14px">Este es tu código de recuperación. Guárdalo en Google y, si quieres, apúntalo también en papel.</p>
+        <div class="reccode" id="recCode"></div>
+        <button class="gbtn" id="recSave" type="button"><svg viewBox="0 0 48 48" width="20" height="20" style="flex:none"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>Guardar en mi cuenta de Google</button>
+        <button class="ghost wide" id="recCopy" type="button">Copiar código</button>
+        <p class="note" id="recNote" style="margin:0"></p>
+        <button class="primary wide" id="recDone" type="button">Listo</button>
+      </div>
     </div>
   </div>
 </div>
@@ -496,6 +532,30 @@ async function unlockBio(){const b=SEC.auth.bio;SEC.key=await unwrapKey(await pr
 async function checkPw(pw){try{await unwrapKey(await pwKey(pw,SEC.auth.salt,SEC.auth.iter),SEC.auth.pw);return true;}catch(e){return false;}}
 
 /* Pantalla de bloqueo: nada se descifra ni se muestra hasta entrar */
+/* ---------- Recuperación con Google ---------- */
+const RC_ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',RC_ITER=150000;
+function newRecoveryCode(){const b=rnd(20);let c='';for(let i=0;i<20;i++){c+=RC_ALPHA[b[i]&31];if(i%4===3&&i<19)c+='-';}return c;}
+const normCode=c=>(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+async function makeRecovery(){const code=newRecoveryCode(),salt=rnd(16);SEC.auth.rec={salt,iter:RC_ITER,w:await wrapKey(await pwKey(normCode(code),salt,RC_ITER)),at:Date.now()};SEC.auth.recAsked=true;await saveAuth();return code;}
+async function unlockRec(code){const r=SEC.auth.rec;if(!r)throw new Error('sin recuperación');SEC.key=await unwrapKey(await pwKey(normCode(code),r.salt,r.iter),r.w);}
+const canGoogle=()=>!!(window.PasswordCredential&&navigator.credentials&&navigator.credentials.store);
+async function saveCodeToGoogle(code){
+ if(!canGoogle())throw new Error('Este navegador no puede guardar en Google. Copia el código y guárdalo en un sitio seguro.');
+ await navigator.credentials.store(new PasswordCredential({id:'Código de recuperación',name:'Libreta Papel · recuperación',password:code}));
+}
+async function codeFromGoogle(){const c=await navigator.credentials.get({password:true,mediation:'required'});return c&&c.password?c.password:null;}
+function showRecovery(intro){
+ const M=$('#recm');$('#recIntro').classList.toggle('hidden',!intro);$('#recShow').classList.toggle('hidden',intro);$('#recNote').textContent='';M.classList.add('open');
+ let code=null;
+ const reveal=async()=>{code=await makeRecovery();$('#recCode').textContent=code;$('#recIntro').classList.add('hidden');$('#recShow').classList.remove('hidden');updRecState();};
+ $('#recStart').onclick=reveal;
+ $('#recLater').onclick=async()=>{SEC.auth.recAsked=true;await saveAuth();M.classList.remove('open');toast('Puedes activarla cuando quieras en ⋮ Opciones',3500);};
+ $('#recSave').onclick=async()=>{try{await saveCodeToGoogle(code);$('#recNote').textContent='Si Chrome te pregunta, pulsa «Guardar». Quedará en tu Gestor de contraseñas de Google (passwords.google.com).';}catch(e){$('#recNote').textContent=e.message;}};
+ $('#recCopy').onclick=async()=>{try{await navigator.clipboard.writeText(code);toast('Código copiado');}catch(e){toast('No se pudo copiar: apúntalo a mano');}};
+ $('#recDone').onclick=()=>{M.classList.remove('open');$('#recCode').textContent='';code=null;};
+ if(!intro)reveal();
+}
+function updRecState(){const e=$('#optRecState');if(!e||!SEC.auth)return;e.textContent=SEC.auth.rec?'Activada · '+new Date(SEC.auth.rec.at).toLocaleDateString('es-ES'):'Sin activar';$('#optRec').textContent=SEC.auth.rec?'Nuevo código':'Activar';}
 function gate(){
  return new Promise(async res=>{
   const L=$('#lock'),setup=!SEC.auth,err=m=>$('#lkErr').textContent=m;
@@ -510,7 +570,36 @@ function gate(){
   $('#lkForgot').classList.toggle('hidden',setup);
   $('#lkGo').textContent=setup?'Crear contraseña y entrar':'Desbloquear';
   const busy=b=>{$('#lkGo').disabled=b;$('#lkBioBtn').disabled=b;};
-  const done=async()=>{SEC.auth.fails=0;SEC.auth.lockUntil=0;await saveAuth();$('#lkPw').value='';$('#lkPw2').value='';err('');L.classList.add('hidden');res();};
+  const done=async()=>{SEC.auth.fails=0;SEC.auth.lockUntil=0;await saveAuth();$('#lkPw').value='';$('#lkPw2').value='';err('');L.classList.add('hidden');res();
+   if(!SEC.auth.rec&&!SEC.auth.recAsked)setTimeout(()=>showRecovery(true),700);};
+  /* Después de entrar con el código: elegir una contraseña nueva (las notas no se tocan) */
+  const afterRecover=async()=>{
+   await done();let nw=null;
+   while(!nw){nw=await askPw({title:'Crea una contraseña nueva',desc:'Has recuperado el acceso y tus notas están intactas. Elige una contraseña nueva (mínimo 6 caracteres).',confirm2:true,min:6});if(!nw)toast('Necesitas crear una contraseña nueva');}
+   const salt=rnd(16);SEC.auth.pw=await wrapKey(await pwKey(nw,salt,PBKDF2_ITER));SEC.auth.salt=salt;SEC.auth.iter=PBKDF2_ITER;SEC.auth.fails=0;SEC.auth.lockUntil=0;await saveAuth();
+   toast('Contraseña nueva guardada. Tus notas están intactas.',4000);
+  };
+  const rcErr=m=>$('#rcErr').textContent=m;
+  const tryRecover=async secret=>{
+   if(!secret)return false;
+   try{if(SEC.auth.rec){await unlockRec(secret);await afterRecover();return true;}}catch(e){}
+   try{await unlockPw(secret);await done();toast('Era tu contraseña guardada en Google',3500);return true;}catch(e){}
+   return false;
+  };
+  $('#rcGoogle').onclick=async()=>{
+   rcErr('');
+   if(!(window.PasswordCredential&&navigator.credentials)){rcErr('Este navegador no deja leer el Gestor de contraseñas de Google. Abre passwords.google.com, busca «nayrbou-dot.github.io», copia el código y escríbelo abajo.');return;}
+   let sec=null;try{sec=await codeFromGoogle();}catch(e){}
+   if(!sec){rcErr(SEC.auth.rec?'Google no ha devuelto el código. Búscalo en passwords.google.com («nayrbou-dot.github.io») y escríbelo abajo.':'No hay nada guardado en Google para esta libreta.');return;}
+   $('#rcGoogle').disabled=true;if(!await tryRecover(sec))rcErr('Lo guardado en Google no abre esta libreta.');$('#rcGoogle').disabled=false;
+  };
+  $('#rcCodeF').onsubmit=async e=>{e.preventDefault();rcErr('');const c=$('#rcCode').value;if(!c.trim())return rcErr('Escribe el código.');
+   if(!SEC.auth.rec)return rcErr('Esta libreta no tiene código de recuperación activado.');
+   try{await unlockRec(c);$('#rcCode').value='';await afterRecover();}catch(x){rcErr('Código incorrecto. Revisa las letras y los números.');}};
+  $('#rcBio').innerHTML=ic('finger')+'Usar huella o llave de acceso';$('#rcBio').classList.toggle('hidden',!SEC.auth||!SEC.auth.bio);
+  $('#rcBio').onclick=()=>$('#lkBioBtn').click();
+  $('#rcBack').onclick=()=>{$('#lkRecover').classList.add('hidden');$('#lkReset').classList.add('hidden');$('#lkForgot').classList.remove('hidden');$('#lkForm').classList.remove('hidden');};
+  $('#rcWipe').onclick=()=>{$('#lkRecover').classList.add('hidden');forgotPw();};
   $('#lkForm').onsubmit=async e=>{
    e.preventDefault();err('');const pw=$('#lkPw').value;
    if(setup){
@@ -528,14 +617,14 @@ function gate(){
    busy(false);$('#lkGo').textContent='Desbloquear';
   };
   $('#lkBioBtn').onclick=async()=>{err('');const bb=$('#lkBioBtn');bb.disabled=true;try{await unlockBio();if(!$('#lock').classList.contains('hidden'))await done();}catch(x){if(!SEC.key)err(x.name==='NotAllowedError'?'Cancelado. Puedes usar la contraseña.':'No se pudo: '+x.message);}bb.disabled=false;};
-  $('#lkForgot').onclick=forgotPw;
+  $('#lkForgot').onclick=()=>{$('#lkForgot').classList.add('hidden');$('#lkRecover').classList.remove('hidden');$('#lkForm').classList.add('hidden');rcErr(SEC.auth.rec?'':'Esta libreta no tenía la recuperación activada. Prueba con Google por si guardaste ahí la contraseña.');};
   if(!setup&&SEC.auth.bio)setTimeout(()=>$('#lkBioBtn').click(),250);else setTimeout(()=>$('#lkPw').focus(),150);
  });
 }
 function forgotPw(){
  const box=$('#lkReset');box.classList.remove('hidden');$('#lkForgot').classList.add('hidden');$('#lkResetTxt').value='';$('#lkResetErr').textContent='';
  setTimeout(()=>$('#lkResetTxt').focus(),50);
- $('#lkResetNo').onclick=()=>{box.classList.add('hidden');$('#lkForgot').classList.remove('hidden');};
+ $('#lkResetNo').onclick=()=>{box.classList.add('hidden');$('#lkRecover').classList.remove('hidden');};
  $('#lkResetGo').onclick=async()=>{
   // acepta «borrar», «Borrar», «BORRAR», con o sin espacios o tildes
   const v=$('#lkResetTxt').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
@@ -1582,7 +1671,7 @@ function wireUI(){
   if(a==='image')$('#fImage').click();else if(a==='camera')$('#fCamera').click();else if(a==='video')$('#fVideo').click();else if(a==='voice')openRecorder();});
  $$('[data-close]').forEach(b=>b.onclick=()=>b.closest('.modal').classList.remove('open'));
  $$('.modal').forEach(m=>m.addEventListener('pointerdown',e=>{if(e.target===m&&m.id!=='imged'&&m.id!=='ask'&&!(m.id==='rec'&&REC.on))m.classList.remove('open');}));
- $('#bMenu').onclick=async()=>{$('#optBio').checked=!!SEC.auth.bio;$('#optBio').disabled=!await bioPossible()&&!SEC.auth.bio;$('#optLock').value=String(SEC.auth.lockMin||5);$('#optCloud').checked=!!SEC.auth.cloudSR;$('#optPen').checked=S.penOnly;$('#optPaper').value=S.page.paper||'blank';$('#optLang').value=S.lang;$('#menu').classList.add('open');};
+ $('#bMenu').onclick=async()=>{updRecState();$('#optBio').checked=!!SEC.auth.bio;$('#optBio').disabled=!await bioPossible()&&!SEC.auth.bio;$('#optLock').value=String(SEC.auth.lockMin||5);$('#optCloud').checked=!!SEC.auth.cloudSR;$('#optPen').checked=S.penOnly;$('#optPaper').value=S.page.paper||'blank';$('#optLang').value=S.lang;$('#menu').classList.add('open');};
  $('#optPen').onchange=e=>{S.penOnly=e.target.checked;savePrefs();toast(S.penOnly?'Solo el lápiz dibuja; el dedo mueve la hoja':'El dedo también dibuja');};
  $('#optPaper').onchange=e=>{S.page.paper=e.target.value;drawBg();markDirty();};
  const vnAll=show=>{let n=0;for(const o of S.page.objects)if(o.type==='video'){o.showNotes=show;n++;const el=objsEl.querySelector(`[data-id="${o.id}"]`);el&&el._sync&&el._sync();}
@@ -1594,6 +1683,9 @@ function wireUI(){
  $('#bLock').onclick=lockNow;
  $('#optLock').onchange=async e=>{SEC.auth.lockMin=+e.target.value;await saveAuth();};
  $('#optPass').onclick=changePw;
+ $('#optRec').onclick=async()=>{
+  if(SEC.auth.rec){const pw=await askPw({title:'Confirma tu contraseña',desc:'Se creará un código nuevo y el anterior dejará de funcionar.'});if(pw==null)return;if(!await checkPw(pw)){toast('Contraseña incorrecta');return;}}
+  $('#menu').classList.remove('open');showRecovery(false);};
  $('#optCloud').onchange=async e=>{
   if(e.target.checked&&!confirm('Si lo activas y tu tablet no puede transcribir sin conexión, el audio se enviará a los servidores de Google para convertirlo en texto.\n\n¿Activar de todos modos?')){e.target.checked=false;return;}
   SEC.auth.cloudSR=e.target.checked;await saveAuth();};

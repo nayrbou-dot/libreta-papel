@@ -19,7 +19,9 @@ Sirve para probar, pero según cómo lo abra el gestor de archivos, Android pued
 - **Nada sale de la tablet.** La app no tiene servidor ni cuenta y no envía datos a internet.
 - **Se bloquea sola** tras unos minutos sin usarla, o al volver después de salir de la app. Se puede ajustar en Opciones ⋮ (de 1 a 30 minutos). El candado 🔒 de la barra la bloquea al instante.
 - Tras varios intentos fallidos, hay que esperar cada vez más antes de volver a probar.
-- **Si olvidas la contraseña, nadie puede recuperar las notas** (ni siquiera tú). Haz copias de seguridad.
+- **Recuperación con Google:** al crear la contraseña (o en ⋮ Opciones → Recuperación con Google) la app genera un **código de recuperación** que también abre tu libreta. Pulsa **«Guardar en mi cuenta de Google»** y acepta cuando Chrome pregunte: quedará en tu Gestor de contraseñas de Google (passwords.google.com). Apúntalo también en papel si quieres.
+- **Si olvidas la contraseña:** en la pantalla de bloqueo, **«¿Olvidaste la contraseña?» → «Recuperar con Google»** (o escribe el código a mano). Entras, creas una contraseña nueva y **no pierdes ninguna nota**. También sirve «Usar huella o llave de acceso» si la activaste.
+- Sin contraseña, sin código y sin huella, nadie puede recuperar las notas (ni siquiera tú): solo queda «Empezar de cero». Haz copias de seguridad.
 - **Tus otros dispositivos:** instala la app en cada uno y crea tu contraseña. Para pasar las notas, usa Opciones → Copia de seguridad → Exportar en uno e Importar en el otro. La copia va **cifrada con una contraseña** que eliges al exportarla.
 - La dirección web donde alojes la app solo contiene el programa vacío, nunca tus notas. Si además quieres que nadie más pueda ni abrir esa dirección, protégela con un acceso por correo (por ejemplo, Cloudflare Pages + Cloudflare Access, gratis, limitado a tu email).
 - Recomendado: ten activado el bloqueo de pantalla de Android en la tablet.
