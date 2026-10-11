@@ -63,6 +63,11 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stro
 .vdone{background:#ffb020;color:#111;font-weight:700}
 .vhint{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font-size:13px;padding:5px 12px;border-radius:999px;display:none;z-index:2;pointer-events:none;white-space:nowrap}
 .vwrap.anno .vhint{display:block}
+.vresume{position:absolute;left:8px;top:8px;display:none;align-items:center;gap:8px;background:rgba(20,20,25,.85);color:#fff;border-radius:999px;padding:6px 6px 6px 16px;z-index:3;font-size:15px;font-weight:600;white-space:nowrap}
+.vresume.on{display:flex}
+.vresume .vbtn{background:rgba(255,255,255,.16);height:34px}
+.vresume .vgo{background:#ffb020;color:#111}
+.vhead select{height:34px;border-radius:999px;border:0;background:#eef0f4;padding:0 12px;font-size:14px;color:inherit}
 .vthumb{width:96px;border-radius:6px;flex:none;cursor:pointer;background:#2a2c33}
 .vitem.ed{outline:2px solid #ffb020}
 .vexpov{position:fixed;inset:0;background:rgba(20,20,25,.5);z-index:70;display:flex;align-items:center;justify-content:center}
@@ -1052,7 +1057,7 @@ stage.addEventListener('contextmenu',e=>e.preventDefault());
 objsEl.addEventListener('pointerdown',e=>{
  if(e.target.closest('.obar,.resize'))return;
  const card=e.target.closest('.obj');
- if(S.tool!=='hand'&&S.tool!=='text'&&isDrawTool(S.tool)&&wantsDraw(e)&&!e.target.closest('.vnotes,.vtop,.vanno,.vwrap.anno')){
+ if(S.tool!=='hand'&&S.tool!=='text'&&isDrawTool(S.tool)&&wantsDraw(e)&&!e.target.closest('.vnotes,.vtop,.vanno,.vresume,.vwrap.anno')){
   e.preventDefault();e.stopPropagation();stageDown(e,true);return;
  }
  if(e.pointerType==='touch'&&Date.now()-lastPen<400){e.stopPropagation();return;}
@@ -1308,9 +1313,10 @@ function buildVideo(o,el,body,bar,del){
    <button class="vbtn vrub" title="Goma: toca un trazo para borrarlo"></button><button class="vbtn vundo" title="Deshacer trazo"></button>
    <select class="vdur" title="Cuánto tiempo se ve la nota">${DUR_OPTS.map(([v,l])=>`<option value="${v}">⏱ ${l}</option>`).join('')}</select>
    <button class="vbtn vtxt" title="Añadir texto a esta nota">Aa</button><span class="vflex"></span><button class="vbtn vdone">Listo</button></div>
-  <div class="vhint">Escribe con el lápiz sobre el vídeo</div></div>
+  <div class="vhint">Escribe con el lápiz sobre el vídeo</div>
+  <div class="vresume"><span></span><button class="vbtn vgo" type="button">Seguir ya</button><button class="vbtn vstay" type="button">Quedarse</button></div></div>
   <div class="vnotes"><div class="vtrack" title="Toca para ir a ese momento"><div class="rail"></div><div class="prog"></div></div>
-  <div class="vhead"><button class="pill vadd"></button><label class="pill" title="El vídeo se detiene al llegar a cada nota"><input type="checkbox" class="vpause"> Pausar en cada nota</label><button class="pill vexp" title="Crea un vídeo nuevo con las notas grabadas dentro"></button></div>
+  <div class="vhead"><button class="pill vadd"></button><label class="pill" title="El vídeo se detiene al llegar a cada nota"><input type="checkbox" class="vpause"> Pausar en cada nota</label><select class="vpsec" title="Cuánto tiempo se queda en pausa antes de seguir">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}">Sigue a los ${n} s</option>`).join('')}<option value="0">Pausa indefinida</option></select><button class="pill vexp" title="Crea un vídeo nuevo con las notas grabadas dentro"></button></div>
   <div class="vlist"></div></div>`;
  const q=s=>body.querySelector(s);
  const wrap=q('.vwrap'),v=q('video'),ink=q('.vink'),ictx=ink.getContext('2d'),panel=q('.vnotes'),track=q('.vtrack'),prog=q('.prog'),list=q('.vlist'),
@@ -1318,7 +1324,23 @@ function buildVideo(o,el,body,bar,del){
  pen.innerHTML=ic('pen')+'Anotar';q('.vfs').innerHTML=ic('full');q('.vrub').innerHTML=ic('eraser');q('.vundo').innerHTML=ic('undo');q('.vexp').innerHTML=ic('video')+'Exportar con notas';
  const sw=q('.vsw');VINK_COLORS.forEach(c=>{const b=document.createElement('button');b.className='vcol';b.style.background=c;b.dataset.c=c;sw.appendChild(b);});
  const syncTools=()=>{sw.querySelectorAll('.vcol').forEach(b=>b.classList.toggle('on',b.dataset.c===vcfg.color&&!rubber));q('.vsize').value=vcfg.size;q('.vrub').classList.toggle('on',rubber);};
- pauseC.checked=!!o.pauseAt;pauseC.onchange=()=>{o.pauseAt=pauseC.checked;markDirty();};
+ const psec=q('.vpsec'),resBox=q('.vresume');
+ pauseC.checked=!!o.pauseAt;psec.value=String(o.pauseSec||0);psec.style.display=o.pauseAt?'':'none';
+ pauseC.onchange=()=>{o.pauseAt=pauseC.checked;psec.style.display=o.pauseAt?'':'none';if(!o.pauseAt)cancelResume();markDirty();};
+ psec.onchange=()=>{o.pauseSec=+psec.value;markDirty();};
+ /* Pausa en una nota y, si se eligió, sigue sola al cabo de X segundos */
+ let resumeT=null,resumeAt=0;
+ function cancelResume(){clearInterval(resumeT);resumeT=null;resBox.classList.remove('on');}
+ function autoPause(n){
+  cancelResume();v.pause();v.currentTime=n.t;
+  const sec=o.pauseSec||0;if(!sec)return; // pausa indefinida: sigue cuando tú pulses ▶
+  resumeAt=Date.now()+sec*1000;
+  const upd=()=>{if(!el.isConnected){cancelResume();return;}const left=Math.ceil((resumeAt-Date.now())/1000);
+   if(left<=0){cancelResume();v.play().catch(()=>{});return;}resBox.querySelector('span').textContent='Sigue en '+left+' s';};
+  resBox.classList.add('on');upd();resumeT=setInterval(upd,200);
+ }
+ resBox.querySelector('.vgo').onclick=e=>{e.stopPropagation();cancelResume();v.play().catch(()=>{});};
+ resBox.querySelector('.vstay').onclick=e=>{e.stopPropagation();cancelResume();};
  blobURL(o.blobId).then(u=>{if(u)v.src=u+'#t=0.1';});
  const dur=()=>isFinite(v.duration)&&v.duration>0?v.duration:0;
  const ar=()=>v.videoWidth?v.videoWidth/v.videoHeight:(o.ar||16/9);
@@ -1369,6 +1391,7 @@ function buildVideo(o,el,body,bar,del){
  q('.vtxt').onclick=e=>{e.stopPropagation();if(!editing)return;const n=editing;finishEdit(true);const t=list.querySelector(`[data-id="${n.id}"] .vtext`);if(t){t.focus();t.scrollIntoView({block:'nearest'});}};
  q('.vdone').onclick=e=>{e.stopPropagation();finishEdit();};
  function startEdit(n){
+  cancelResume();
   if(editing)finishEdit(true);
   v.pause();commit();if(!vnShown(o))o.showNotes=true;
   if(!n){n={id:'n_'+uid(),t:Math.round(v.currentTime*10)/10,text:'',strokes:[],dur:4};o.notes.push(n);o.notes.sort((a,b)=>a.t-b.t);}
@@ -1392,7 +1415,7 @@ function buildVideo(o,el,body,bar,del){
   for(const n of o.notes){
    const it=document.createElement('div');it.className='vitem'+(n===editing?' ed':'');it.dataset.id=n.id;
    const tb=document.createElement('button');tb.className='vtime';tb.textContent=fmtT(n.t);tb.title='Ir a este momento';
-   tb.onclick=e=>{e.stopPropagation();if(editing)finishEdit();v.currentTime=n.t;v.pause();onTime();};
+   tb.onclick=e=>{e.stopPropagation();cancelResume();if(editing)finishEdit();v.currentTime=n.t;v.pause();onTime();};
    const th=document.createElement('canvas');th.className='vthumb';th.title='Editar la nota a mano';th.width=160;th.height=Math.round(160/ar());
    const tc=th.getContext('2d');tc.fillStyle='#2a2c33';tc.fillRect(0,0,th.width,th.height);drawInkNote(tc,n,{x:0,y:0,w:th.width,h:th.height});
    if(!n.strokes.length){tc.fillStyle='#8a8f9c';tc.font='13px system-ui';tc.textAlign='center';tc.fillText('✏️ dibujar',th.width/2,th.height/2+4);}
@@ -1418,7 +1441,7 @@ function buildVideo(o,el,body,bar,del){
   const t=v.currentTime,d=dur();
   if(d)prog.style.width=clamp(t/d*100,0,100)+'%';
   addB.innerHTML=ic('pen')+'Anotar en '+fmtT(t);
-  if(o.pauseAt&&!v.paused&&t>lastT&&t-lastT<1.2){const hit=o.notes.find(n=>n.t>lastT&&n.t<=t);if(hit){v.pause();v.currentTime=hit.t;}}
+  if(o.pauseAt&&!v.paused&&t>lastT&&t-lastT<1.2){const hit=o.notes.find(n=>n.t>lastT&&n.t<=t);if(hit)autoPause(hit);}
   lastT=t;
   const act=new Set(activeNotes(o,t,d).map(n=>n.id));
   list.querySelectorAll('.vitem').forEach(x=>x.classList.toggle('on',act.has(x.dataset.id)));
@@ -1426,7 +1449,7 @@ function buildVideo(o,el,body,bar,del){
   drawInk();
  }
  v.addEventListener('timeupdate',onTime);v.addEventListener('seeked',onTime);
- v.addEventListener('play',()=>{if(editing)finishEdit();});
+ v.addEventListener('play',()=>{cancelResume();if(editing)finishEdit();});
  // refresco suave mientras se reproduce (las notas aparecen y desaparecen a tiempo)
  const tick=()=>{if(!v.paused&&!v.ended&&el.isConnected){onTime();requestAnimationFrame(tick);}};
  v.addEventListener('play',()=>requestAnimationFrame(tick));
@@ -1439,7 +1462,7 @@ function buildVideo(o,el,body,bar,del){
  wrap.addEventListener('fullscreenchange',()=>setTimeout(drawInk,80));
  q('.vexp').onclick=e=>{e.stopPropagation();if(editing)finishEdit();exportAnnotated(o,v);};
  track.addEventListener('pointerdown',e=>{
-  e.stopPropagation();const d=dur();if(!d)return;
+  e.stopPropagation();cancelResume();const d=dur();if(!d)return;
   const mk=e.target.closest('.mk');
   if(mk){const n=o.notes.find(x=>x.id===mk.dataset.id);if(n){v.currentTime=n.t;onTime();return;}}
   const r=track.getBoundingClientRect();v.currentTime=clamp((e.clientX-r.left)/r.width,0,1)*d;onTime();
