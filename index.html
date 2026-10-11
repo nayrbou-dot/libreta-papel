@@ -344,6 +344,13 @@ input[type=password],input[type=text]{-webkit-user-select:text;user-select:text}
     </form>
     <button class="ghost wide bio hidden" id="lkBioBtn" type="button"></button>
     <button class="linkbtn hidden" id="lkForgot" type="button">¿Olvidaste la contraseña?</button>
+    <div id="lkReset" class="hidden" style="text-align:left;margin-top:16px;border-top:1px solid var(--line);padding-top:16px">
+      <p style="margin:0 0 8px;font-weight:600">Empezar de cero</p>
+      <p class="note" style="margin:0 0 10px">Sin la contraseña tus notas no se pueden descifrar: nadie puede recuperarlas. Si sigues, se borrarán todas las notas de este dispositivo y crearás una contraseña nueva. Si tienes una copia de seguridad, podrás importarla después.</p>
+      <input type="text" id="lkResetTxt" class="pw" placeholder="Escribe BORRAR para confirmar" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <div class="err" id="lkResetErr"></div>
+      <div style="display:flex;gap:8px"><button class="ghost wide" id="lkResetNo" type="button">Cancelar</button><button class="primary wide" id="lkResetGo" type="button" style="background:var(--danger)">Borrar todo</button></div>
+    </div>
   </div>
 </div>
 
@@ -525,9 +532,18 @@ function gate(){
   if(!setup&&SEC.auth.bio)setTimeout(()=>$('#lkBioBtn').click(),250);else setTimeout(()=>$('#lkPw').focus(),150);
  });
 }
-async function forgotPw(){
- if(!confirm('Sin la contraseña tus notas no se pueden descifrar: nadie puede recuperarlas, tampoco tú.\n\n¿Quieres BORRAR todas las notas de este dispositivo y empezar de cero?'))return;
- if(prompt('Escribe BORRAR para confirmar')!=='BORRAR')return;
+function forgotPw(){
+ const box=$('#lkReset');box.classList.remove('hidden');$('#lkForgot').classList.add('hidden');$('#lkResetTxt').value='';$('#lkResetErr').textContent='';
+ setTimeout(()=>$('#lkResetTxt').focus(),50);
+ $('#lkResetNo').onclick=()=>{box.classList.add('hidden');$('#lkForgot').classList.remove('hidden');};
+ $('#lkResetGo').onclick=async()=>{
+  // acepta «borrar», «Borrar», «BORRAR», con o sin espacios o tildes
+  const v=$('#lkResetTxt').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+  if(v!=='BORRAR'){$('#lkResetErr').textContent='Escribe la palabra BORRAR para confirmar.';return;}
+  $('#lkResetGo').disabled=true;$('#lkResetGo').textContent='Borrando…';await wipeAll();
+ };
+}
+async function wipeAll(){
  try{DB.db&&DB.db.close();}catch(e){}
  await new Promise(r=>{const q=indexedDB.deleteDatabase('libreta-papel');q.onsuccess=q.onerror=q.onblocked=()=>r();});
  try{localStorage.clear();}catch(e){}location.reload();
