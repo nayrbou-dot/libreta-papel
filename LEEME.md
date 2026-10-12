@@ -43,6 +43,12 @@ La lectura en voz alta usa el motor de voz del sistema (Ajustes → Accesibilida
 - **Pantalla completa con notas:** usa el botón ⛶ de arriba a la derecha del vídeo (la pantalla completa propia del reproductor no muestra las notas).
 - **Exportar con notas:** crea un vídeo nuevo con las notas grabadas dentro de la imagen y el sonido original. Aparece debajo en la libreta y se guarda en Descargas, para verlo en cualquier sitio.
 - **Ver u ocultar las notas:** botón **«Ocultar / Ver notas»** sobre el vídeo. Para todos los vídeos de la página: ⋮ Opciones → Notas de los vídeos → Mostrar / Ocultar.
+- **Notas flotantes (pósits):** cada una pertenece a su sitio y va siempre con él:
+  - **En la página:** + → **Nota flotante**. Queda por encima de todo; muévela desde la barra superior y cambia el tamaño desde la esquina.
+  - **En un vídeo:** botón **«Flotante»** sobre el vídeo. Va pegada a ese vídeo (también en pantalla completa y en «Exportar con notas»).
+  - **En una foto:** toca la foto y en su barra pulsa el icono de nota. Va pegada a esa foto.
+  - En todas: escribe **a mano con el lápiz** o pulsa **Aa** para usar el teclado; el círculo cambia el color; **–** la minimiza (toca el icono para abrirla); la papelera la borra.
+  - **Ver u ocultar:** en el vídeo con «Ocultar / Ver notas»; en la foto con el icono del ojo; en la página con ⋮ Opciones → Notas flotantes de la página.
 - **Editar imagen:** girar, espejo, recortar, brillo, contraste, saturación, sepia, desenfoque, B/N.
 - **Notas de voz:** se graban y se transcriben a la vez. «Leer» las lee en voz alta, «Transcribir» vuelve a transcribirlas y «Pasar a texto» crea una nota de texto con la transcripción.
 - **🔊 arriba:** lee en voz alta toda la nota (textos y transcripciones).
